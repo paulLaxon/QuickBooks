@@ -1,0 +1,20 @@
+<% layout('layouts/boilerplate') %>
+<h1>All Books</h1>
+<a class="btn btn-info mb-5" href="/books/new">Add a Book</a>
+<% for (let book of books) {%>
+  <div class="card" mb-3>
+    <div class="row">
+      <div class="col-md-2">
+        <img src="<%= book.image %>" height="200px" width="auto" alt="<%= book.title %> by <%= book.author %>">
+      </div>
+      <div class="col-md-5">
+        <div class="card-body">
+          <h5 class="card-title"><%= book.title %></h5>
+          <h6 class="card-text">by <%= book.author %></p>
+          <p class="card-text"><%= book.description %></p>
+          <a class="btn btn-primary" href="/books/<%= book._id %>">View <%= book.title %></a>
+        </div>
+      </div>
+    </div>
+  </div>
+<% } %>

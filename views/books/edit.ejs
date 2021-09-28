@@ -1,0 +1,47 @@
+<% layout('layouts/boilerplate') %>
+<div class="row">
+  <h1 class="text-center">Edit Book</h1>
+  <div class="col-6 offset-3">
+    <form action="/books/<%= book._id %>?_method=PUT" method="POST" novalidate class="needs-validation">
+      <div class="mb-3">
+        <label class="form-label" for="title">Title</label>
+        <input class="form-control" type="text" id="title" name="book[title]" value="<%= book.title %>" required>
+        <div class="invalid-feedback">
+          Enter a title
+        </div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label" for="author">Author</label>
+        <input class="form-control mb-3" type="text" id="author" name="book[author]" value="<%= book.author %>" required>
+        <div class="invalid-feedback">
+          Enter an author
+        </div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label" for="isbn">ISBN</label>
+        <input class="form-control mb-3" type="text" id="isbn" name="book[isbn]" value="<%= book.isbn %>" required>
+        <div class="invalid-feedback">
+          Enter an ISBN
+        </div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label" for="description">Description</label>
+        <textarea rows="6" class="form-control mb-3" type="" id="description" name="book[description]"><%= book.description %></textarea>
+      </div>
+      <div class="mb-3">
+        <label class="form-label" for="image">Image URL</label>
+        <input class="form-control mb-3" type="text" id="image" name="book[image]" value="<%= book.image %>">
+      </div>
+      <div class="mb-3">
+        <label class="form-label" for="type">Type</label>
+        <input class="form-control mb-3" type="text" id="type" name="book[type]" value="<%= book.type %>">
+      </div>
+      <div class="mb-3">
+        <label class="form-label" for="publisher">Publisher</label>
+        <input class="form-control mb-3" type="text" id="publisher" name="book[publisher]" value="<%= book.publisher %>">
+      </div>
+      <button class="btn btn-info mb-3">Update Book</button>
+    </form>
+    <a class="btn btn-primary" href="/books/<%= book._id %>">Back to Book</a>
+  </div>
+</div>

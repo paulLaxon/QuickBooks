@@ -1,0 +1,33 @@
+<% layout('layouts/boilerplate') %>
+<% let formatter = new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD'}); %>
+<h1>All Orders</h1>
+<a class="btn btn-info mb-5" href="/orders/new">Start a New Order</a>
+<table class="table table-striped">
+  <thead>
+    <tr class="fs-5">
+      <th scope="col">#</th>
+      <th scope="col">Date</th>
+      <th scope="col">Total Cost</th>
+      <th scope="col">View Order</th>
+      <th scope="col">Remove Order</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% for (const [index, order] of orders.entries()) {%>
+      <tr>
+        <th scope="row"><%= index + 1 %>.</th>
+        <td><%= order.date.toLocaleString('default', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }) %></td>
+        <td style="text-align:right;"><%= formatter.format(sumPrices[index]) %></td>
+        <td><a class="btn btn-info" href="/orders/<%= order._id %>">View</button></td>
+        <td><button class="btn btn-warning" onclick="RemoveOrderRow(this)">Delete</button></td>
+      </tr>
+    <% } %>
+  </tbody>
+</table>
+
+<script>
+  function RemoveOrderRow(o) {
+   let p = o.parentNode.parentNode;
+       p.parentNode.removeChild(p);
+  }
+</script>

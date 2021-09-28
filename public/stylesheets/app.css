@@ -1,0 +1,5 @@
+/* Style the active class (and navbar menu item on mouse-over) */
+.active, .nav-link:hover {
+  background-color: #666;
+  color: white;
+}

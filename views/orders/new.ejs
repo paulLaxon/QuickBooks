@@ -1,0 +1,77 @@
+<% layout('layouts/boilerplate') %>
+<% count = 0 %>
+<% let formatter = new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD'}); %>
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">New Order</h5>
+        <button class="btn btn-success" onclick="AddBook()">Add Book</button>
+        <button class="btn btn-info" onclick="OpenBookSite()">Open Book Site</button>
+        <div class="container fw-bold">
+          <table class="table table-striped">
+            <thead>
+              <tr class="fs-5">
+                <th scope="col">#</th>
+                <th scope="col">Title</th>
+                <th scope="col">Author</th>
+                <th scope="col">ISBN</th>
+                <th scope="col">Qty</th>
+                <th scope="col">Price</th>
+                <th scope="col">Vendor</th>
+              </tr>
+            </thead>
+            <% if (count > 0) { %>
+              <tbody>
+                <tr>
+                  <th scope="row"><%= 1 %>.</th>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td><input type="text" id="quantity" size="1" style="text-align:right;" name="item[quantity]"></td>
+                  <td><input type="text" id="price" size="3" style="text-align:right;" name="item[Price]" value=""></td>
+                  <td><input type="text" id="vendor" size="6" name="item[vendor]"></td>
+                  <td><input type="button" class="btn btn-warning" value="Remove Book" onclick="RemoveBookRow(this)"></td>
+                </tr>
+                <th><td class="fs-5" colspan="4">Order Total = <%=  %> (not including taxes)</td></th>
+              </tbody>
+            <% } %>
+          </table>
+        </div>
+      </div>
+      <div class="card-footer col-md-6 btn-toolbar" role="toolbar" aria-label="Toolbar">
+        <div class="btn-group" role="group" aria-label="button group">
+          <div class="mr-2">
+            <a href="/orders" class="card-link btn btn-info">Back to Orders</a>
+          </div>
+          <div>
+            <form class="d-inline">
+              <button class="btn btn-danger">Cancel Order</button>
+            </form>
+          </div>
+          <div>
+            <form class="d-inline" action="/orders" method="POST">
+              <button class="btn btn-success">Save Order</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript" src="../../scraper/start_scraper.js"></script>
+<script>
+  function RemoveBookRow(o) {
+   let p = o.parentNode.parentNode;
+       p.parentNode.removeChild(p);
+  }
+
+  function OpenBookSite() {
+    startScraper();
+  }
+
+  function AddBook() {
+  }
+</script>

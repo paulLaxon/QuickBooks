@@ -1,0 +1,69 @@
+<% layout('layouts/boilerplate') %>
+<% let formatter = new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD'}); %>
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Order from <%= order.date.toLocaleString('default', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }) %></h5>
+        <div class="container fw-bold">
+          <table class="table table-striped">
+            <thead>
+              <tr class="fs-5">
+                <th scope="col">#</th>
+                <th scope="col">Title</th>
+                <th scope="col">Author</th>
+                <th scope="col">ISBN</th>
+                <th scope="col">Qty</th>
+                <th scope="col">Price</th>
+                <th scope="col">Vendor</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% for (const [index , item] of order.books.entries()) {%>
+                <tr>
+                  <th scope="row"><%= index + 1 %>.</th>
+                  <td><%= item.book.title %></td>
+                  <td><%= item.book.author %></td>
+                  <td><%= item.book.isbn %></td>
+                  <td><input type="text" id="quantity" size="1" style="text-align:right;" name="item[quantity]" value="<%= item.quantity %>"></td>
+                  <td><input type="text" id="price" size="3" style="text-align:right;" name="item[Price]" value="<%= formatter.format(item.price) %>"></td>
+                  <td><input type="text" id="vendor" size="6" name="item[vendor]" value="<%= item.vendor %>"></td>
+                  <td><input type="button" class="btn btn-warning" value="Remove Book" onclick="RemoveBookRow(this)"></td>
+                </tr>
+              <% } %>
+              <th><td class="fs-5" colspan="4">Order Total = <%= formatter.format(sumPrices) %> (not including taxes)</td></th>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card-footer col-md-6 btn-toolbar" role="toolbar" aria-label="Toolbar">
+        <div class="btn-group" role="group" aria-label="button group">
+          <div class="mr-2">
+            <a href="/orders/<%= order._id %>/edit" class="card-link btn btn-primary">Edit Order</a>
+          </div>
+          <div class="mr-2">
+            <a href="/orders" class="card-link btn btn-info">Back to Orders</a>
+          </div>
+          <div>
+            <form class="d-inline" action="/orders/<%= order._id %>?_method=DELETE" method="POST">
+              <button class="btn btn-danger">Delete Order</button>
+            </form>
+          </div>
+          <div>
+            <form class="d-inline" action="/orders/<%= order._id %>?_method=PUT" method="POST">
+              <button class="btn btn-success">Update Order</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function RemoveBookRow(o) {
+   let p = o.parentNode.parentNode;
+       p.parentNode.removeChild(p);
+  }
+</script>
