@@ -1,4 +1,5 @@
 const Order = require('../models/order');
+const scraperObject = require('../scraper/browser');
 
 module.exports.index = async (req, res) => {
   const orders = await Order.find({});
@@ -21,7 +22,7 @@ module.exports.index = async (req, res) => {
 }
 
 module.exports.renderNewOrderForm = async (req, res) => {
-  res.render('orders/new');
+  res.render('orders/new', { scraperObject:scraperObject.startBrowser });
 }
 
 module.exports.saveNewOrder = async (req, res, next) => {

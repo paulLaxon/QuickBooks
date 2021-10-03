@@ -1,23 +1,23 @@
 const puppeteer = require('puppeteer');
 
-async function startBrowser(){
+async function startBrowser(url){
   let browser;
   try {
     console.log("Opening the browser......");
     browser = await puppeteer.launch({
         headless: false,
-        args: ["--disable-setuid-sandbox"],
+        args: [
+          `--window-size=${options.width},${options.height}`, 
+          "--disable-setuid-sandbox",
+        ],
         'ignoreHTTPSErrors': true
     });
 
-    let page = await browser.newPage();
-    console.log(`Navigating to ${this.url}...`);
-    await page.goto(this.url);
-    await page.waitForSelector('#twotabsearchtextbox');
   } catch (err) {
     console.log("Could not create a browser instance => : ", err);
   }
-  return page;
+
+  return browser;
 }
 
 module.exports = {
