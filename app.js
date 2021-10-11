@@ -20,6 +20,7 @@ const mongoSanitize = require('express-mongo-sanitize');
 const usersRoutes = require('./routes/users_routes');
 const booksRoutes = require('./routes/books_routes');
 const ordersRoutes = require('./routes/orders_routes');
+const pagesRoutes = require('./routes/pages_routes');
 
 const MongoStore = require('connect-mongo');
 
@@ -119,6 +120,7 @@ app.use((req, res, next) => { // middleware: before routes, whatever is in 'succ
 app.use('/', usersRoutes);
 app.use('/books', booksRoutes);
 app.use('/orders', ordersRoutes);
+app.use('/pages', pagesRoutes);
 
 app.get('/', (req, res) => {
   res.render('home')

@@ -4,50 +4,19 @@ const validateBook = require('../public/javascript/validate_book');
 const Book = require('../models/book');
 const router = express.Router();
 const { isLoggedIn } = require('../middleware');
+const bookController = require('../controllers/book_controller');
 
-router.get('/', isLoggedIn, catchAsync(async (req, res) => {
-  const books = await Book.find({});
-  res.render('books/index', { books })
-}))
+router.route('/')
+  .get(isLoggedIn, catchAsync(bookController.index))
+  .post(isLoggedIn, validateBook, catchAsync(bookController.saveNewBook))
 
-router.get('/new',isLoggedIn, async (req, res) => {
-  res.render('books/new');
-})
+router.get('/new',isLoggedIn, bookController.renderNewForm)
 
-router.post('/', isLoggedIn, validateBook, catchAsync(async (req, res, next) => {
-  const book = new Book(req.body.book);
-  await book.save();
-  req.flash('success', 'Successfully added a new book.')
-  res.redirect(`/books/${book._id}`)
-}))
+router.route('/:id')
+  .get(catchAsync(bookController.showBook))
+  .put(isLoggedIn, validateBook, catchAsync(bookController.updateBook))
+  .delete(isLoggedIn, catchAsync(bookController.deleteBook))
 
-router.get('/:id', catchAsync(async (req, res) => {
-  const book = await Book.findById(req.params.id)
-  if(!book) {
-    req.flash('error', 'Cannot find that book.');
-    res.redirect('/books');
-  }
-  res.render('books/show', { book });
-}))
-
-router.get('/:id/edit', isLoggedIn, catchAsync(async (req, res) => {
-  const book = await Book.findById(req.params.id)
-  res.render('books/edit', { book });
-}))
-
-router.put('/:id', isLoggedIn, validateBook, catchAsync(async(req, res) => {
-  const { id } = req.params;
-  const book = await Book.findByIdAndUpdate(id, { ...req.body.book });
-  req.flash('success', 'Successfully updated the book.')
-  res.redirect(`/books/${book._id}`)
-}))
-
-router.delete('/:id', isLoggedIn, catchAsync(async(req, res) => {
-  const { id } = req.params;
-  const book = await Book.findById(id);
-  await Book.findByIdAndDelete(id);
-  req.flash('success', `Successfully deleted the book '${book.title}' by ${book.author}.`)
-  res.redirect('/books');
-}))
+router.get('/:id/edit', isLoggedIn, catchAsync(bookController.renderEditForm))
 
 module.exports = router;

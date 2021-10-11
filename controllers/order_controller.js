@@ -27,7 +27,8 @@ module.exports.renderNewOrderForm = async (req, res) => {
 module.exports.saveNewOrder = async (req, res, next) => {
   const order = new Order(req.body.order);
   order.owner = req.user._id;
-  await order.save();
+  console.log("Attempting to save");
+  // await order.save();
   req.flash('success', 'Successfully added a new order.')
   res.redirect(`/orders/${order._id}`)
 }
@@ -57,7 +58,9 @@ module.exports.updateOrder = async(req, res) => {
   if (!ord.owner.equals(req.user._id)) {
     res.redirect('/login');
   }
-  const order = await Order.findByIdAndUpdate(id, { ...req.body.order });
+
+  console.log("Attempting to update");
+  // const order = await Order.findByIdAndUpdate(id, { ...req.body.order });
   req.flash('success', 'Successfully updated the order.')
   res.redirect(`/orders/${order._id}`)
 }

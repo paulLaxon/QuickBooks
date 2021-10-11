@@ -11,7 +11,7 @@ router.route('/')
   .get(isLoggedIn, catchAsync(orderController.index))
   .post(isLoggedIn, catchAsync(orderController.saveNewOrder))
 
-router.get('/new',isLoggedIn, orderController.renderNewOrderForm)
+router.get('/new', isLoggedIn, orderController.renderNewOrderForm)
 
 router.route('/:id')
   .get(isLoggedIn, catchAsync(orderController.showOrder))
