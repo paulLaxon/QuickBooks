@@ -3,3 +3,7 @@
   background-color: #666;
   color: white;
 }
+
+input[type='number'] {
+  width: 50px;
+}

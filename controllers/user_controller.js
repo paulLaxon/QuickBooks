@@ -12,7 +12,7 @@ module.exports.saveNewUser = async (req, res, next) => {
     req.login(registeredUser, err => {
       if (err) return next(err);
       req.flash('success', 'Welcome to QuickBooks');
-      res.redirect('/books');
+      res.redirect('/orders');
     });
   } catch(e) {
     req.flash('error', e.message);
