@@ -22,6 +22,7 @@
             <tbody>
               <% for (const [index , item] of order.books.entries()) {%>
                 <tr>
+                  <%= console.log(`item ${index+1} = ${item}`) %>
                   <th scope="row"><%= index + 1 %>.</th>
                   <td><%= item.book.title %></td>
                   <td><%= item.book.author %></td>
@@ -48,6 +49,11 @@
           <div>
             <form class="d-inline" action="/orders/<%= order._id %>?_method=DELETE" method="POST">
               <button class="btn btn-danger">Delete Order</button>
+            </form>
+          </div>
+          <div>
+            <form class="d-inline" action="/orders/<%= order._id %>" method="POST">
+              <button class="btn btn-warning">Upload Order</button>
             </form>
           </div>
           <div>

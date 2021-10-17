@@ -8,7 +8,10 @@ const OrderSchema = new Schema({
       ref: 'OrderItem'
     }
   ],
-  date: Date,
+  date: {
+    type: Date,
+    default: new Date(),
+  },
   owner: {
     type: Schema.Types.ObjectId,
     ref: 'User'

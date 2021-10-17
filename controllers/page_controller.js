@@ -1,9 +1,14 @@
+const OrderItem = require('../models/order_item');
+const Book = require('../models/book');
+
 const puppeteer = require('puppeteer');
+const createOrderItem = require('../public/javascript/create_order_item');
+
 AMAZON_BOOKS_URL = 'https://www.amazon.ca/gp/browse.html?node=916520&ref_=nav_em__bo_0_2_9_2'
-const Page = require('../models/page');
 let browser;
 let pages;
 let page;
+let orderItems = [];
 
 module.exports.pageOptions = async (req, res) => {
   const option = req.body.pageOption;
@@ -16,17 +21,14 @@ module.exports.pageOptions = async (req, res) => {
   } else if (option == 'Close Browser') {
     await closeBrowser();
   } else if (option == 'Get Book Info') {
-    console.log(`browser 2 = ${browser}`);
     pages = await browser.pages();
     page = pages[0];
-    let bookInfo = await scrapePage(page);
-    console.log(`book info: ${JSON.stringify(bookInfo)}`);
-    res.render('orders/new', { bookInfo });;
+    const orderItem = await scrapePage(page);
+    orderItems.push(orderItem);
+    const orderCost = totalCost(orderItems);
+    console.log(`new order items: ${orderItems}`);
+    res.render('orders/new', { orderItems, orderCost });
   }
-}
-
-insertBookInfo = async (bookInfo) => {
-  console.log(bookInfo);
 }
 
 gotoUrl = async () => {
@@ -60,22 +62,24 @@ closeBrowser = async () => {
 }
 
 scrapePage = async (page) => {
-  bookInfo = {};
-  console.log('getting book info');
+  let orderItem = new OrderItem();
+  let book = new Book();
+
   await page.waitForSelector('h1#title');
 
   const productSelector = '#detailBullets_feature_div > ul.detail-bullet-list > li'
   await page.waitForSelector(productSelector);
   await page.$$eval(productSelector, details => details.map(detail => detail.innerText));
-  // bookInfo['genre'] = findGenre(page);
-  bookInfo['title'] = await findTitle(page);
-  bookInfo['author'] = await findAuthor(page);
-  bookInfo['description'] = await findDescription(page);
-  bookInfo['price'] = await findPrice(page);
-  bookInfo['image'] = await findImage(page);
-  await getDetails(page, bookInfo);
-
-  return bookInfo;
+  // item['genre'] = findGenre(page);
+  book['title'] = await findTitle(page);
+  book['author'] = await findAuthor(page);
+  book['description'] = await findDescription(page);
+  const price = await findPrice(page);
+  orderItem['price'] = price;
+  book['image'] = await findImage(page);
+  await getDetails(page, book);
+  orderItem['book'] = book;
+  return orderItem;
 }
 
 async function findGenre(page) {
@@ -93,11 +97,14 @@ async function findImage(page) {
 }
 
 async function findAuthor(page) {
-  return await page.$eval('span.author', el => el.innerText);
+  let author = await page.$eval('span.author', el => el.innerText);
+  author = author.replace('  (Author)', '');
+  return author;
 }
 
 async function findPrice(page) {
-  return await page.$eval('.a-color-price', el => el.innerText);
+  let price = await page.$eval('.a-color-price', el => el.innerText);
+  return parseFloat(price.replace('$', ''));
 }
 
 async function findDescription(page) {
@@ -109,8 +116,7 @@ async function findDescription(page) {
   return await frame.$eval('#iframeContent', el => el.innerText);
 }
 
-async function getDetails(page, bookInfo) {
-  console.log('getting book details...');
+async function getDetails(page, book) {
   const productSelector = '#detailBullets_feature_div > ul.detail-bullet-list > li'
   await page.waitForSelector(productSelector);
   const productDetails = await page.$$eval(productSelector, details => details.map(detail => detail.innerText));
@@ -127,10 +133,18 @@ async function getDetails(page, bookInfo) {
     } else if (pair[0] == 'isbn-10') {
       continue;
     } else if (pair[1].includes('pages')) {
-      bookInfo['pages'] = pair[1].replace(' pages', '');
+      book['pages'] = pair[1].replace(' pages', '');
       pair[1] = pair[0];
       pair[0] = 'type';
     }
-    bookInfo[pair[0]] = pair[1];
+    book[pair[0]] = pair[1];
   }
+}
+
+function totalCost(items) {
+  let cost = 0;
+  for (let item of items) {
+    cost += item.price * item.quantity;
+  }
+  return cost;
 }

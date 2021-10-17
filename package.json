@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "chai": "^4.3.4",
     "connect-flash": "^0.1.1",
     "connect-mongo": "^4.6.0",
     "dotenv": "^10.0.0",
@@ -20,7 +21,6 @@
     "express-session": "^1.17.2",
     "helmet": "^4.6.0",
     "joi": "^17.4.2",
-    "jsdom": "^17.0.0",
     "method-override": "^3.0.0",
     "mongoose": "^6.0.3",
     "morgan": "^1.10.0",

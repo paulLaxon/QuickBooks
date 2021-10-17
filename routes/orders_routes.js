@@ -4,7 +4,7 @@ const orderController = require('../controllers/order_controller');
 const Order = require('../models/order');
 const OrderItem = require('../models/order_item'); // needed to show an order
 const router = express.Router();
-const { isLoggedIn } = require('../middleware');
+const { isLoggedIn, isOwner } = require('../middleware');
 const book = require('../models/book');
 
 router.route('/')
@@ -14,8 +14,8 @@ router.route('/')
 router.get('/new', isLoggedIn, orderController.renderNewOrderForm)
 
 router.route('/:id')
-  .get(isLoggedIn, catchAsync(orderController.showOrder))
-  .put(isLoggedIn, catchAsync(orderController.updateOrder))
-  .delete(isLoggedIn, catchAsync(orderController.deleteOrder))
+  .get(isLoggedIn, isOwner, catchAsync(orderController.showOrder))
+  .put(isLoggedIn, isOwner, catchAsync(orderController.updateOrder))
+  .delete(isLoggedIn, isOwner, catchAsync(orderController.deleteOrder))
 
 module.exports = router;

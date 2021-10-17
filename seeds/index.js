@@ -1,19 +1,44 @@
 const mongoose = require('mongoose');
 const Book = require('../models/book');
 const Order = require('../models/order');
-const Item = require('../models/order_item');
+const OrderItem = require('../models/order_item');
+
 const fs = require('fs');
 
-mongoose.connect('mongodb://localhost:27017/book-orders');
+// const dbUrl = process.env.DB_URL;
+const dbUrl = 'mongodb://localhost:27017/book-orders';
+mongoose.connect(dbUrl, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+});
 
 const db = mongoose.connection;
-db.on("error", console.error.bind(console, "connection error:"));
+db.on("error", console.error.bind(console, "Connection error:"));
 db.once("open", () => {
     console.log("Database connected");
 });
+console.log('Seeding db');
 
 const seedDb = async () => {
   await Book.deleteMany({});
+  // isbns = 
+  //   [
+  //     9780399128967, 
+  //     9780345296085, 
+  //     9780441569595, 
+  //     9781845761219, 
+  //     9780786965625, 
+  //     9780345317988,
+  //     9780140065008,
+  //     9780385539241,
+  //     9780194230698,
+  //     9780007119318,
+  //     9780855277574,
+  //     9780394502946,
+  //     9780140008333,
+  //     9780772011886,
+  //     9780345535528
+  //   ]
 
   fs.readFile('./seeds/nytimesbooks.json', (err, data) => {
     if (err) throw err;
@@ -27,7 +52,8 @@ const seedDb = async () => {
         publisher: book.publisher,
         description: book.description,
         image: book.book_image,
-        type: 'hard cover'
+        type: 'hard cover',
+        genre: 'fiction',
       });
       process.stdout.write(`Downloading book ${i} of ${books.length}\r`);
       newBook.save();
@@ -35,9 +61,9 @@ const seedDb = async () => {
     }
     console.log('\nBook download complete.\n');
   });
-  
   await Order.deleteMany({});
-  await Item.deleteMany({});
+  await OrderItem.deleteMany({});
+
   console.log('\nStarting Orders seed\n');
 
   const newBooks = await Book.find({});
@@ -50,7 +76,7 @@ const seedDb = async () => {
       const randomBookIndex = Math.floor(Math.random() * newBooks.length);
       const price = Math.floor(Math.random() * 20.0 + 10.0);
       const quantity = Math.floor(Math.random() * 10 + 1);
-      const item = new Item({
+      const item = new OrderItem({
         quantity: quantity,
         vendor: 'Amazon',
         price: price,
@@ -61,7 +87,7 @@ const seedDb = async () => {
     }
 
     const order = new Order({
-      owner: '613d8e61be26c2e95a7e36b3',
+      owner: '61694f50f02738ea9ae2a519',
       date: Date.now() - Math.floor(Math.random() * 1000 * 24 * 3600 * 365),
       books: items
     });
@@ -71,6 +97,3 @@ const seedDb = async () => {
 }
 
 seedDb();
-db.close(() => {
-  console.log('Mongoose disconnected on app termination');
-});
