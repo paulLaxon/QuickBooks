@@ -22,15 +22,35 @@ module.exports.renderNewOrderForm = async (req, res) => {
 }
 
 module.exports.saveNewOrder = async (req, res, next) => {
-  console.log(`req: ${JSON.stringify(req.body)}`);
-  console.log(`user: ${JSON.stringify(req.user._id)}`);
+  const items = req.body;
+  const itemsSize = items.orderItem.book.title.length;
+  const books = [];
+  for (let i = 0; i < itemsSize; i++) {
+    let newBook = new Book({
+      title: items.orderItem.book.title[i],
+      author: items.orderItem.book.author[i],
+      isbn: items.orderItem.book.isbn[i],
+    });
+    await newBook.save();
 
-  const order = new Order(req.body);
-  order.owner = req.user._id;
+    const amount = parseFloat(items.orderItem.price[i].replace('$', '').replace(',', ''));
+
+    let newItem = new OrderItem({
+      book: newBook,
+      price: amount,
+      vendor: items.orderItem.vendor[i],
+    });
+    await newItem.save();
+    books.push(newItem);
+  }
+    const order = new Order({
+    books: books,
+    owner: req.user._id,
+  });
   console.log(`Attempting to save order: ${order}`);
   await order.save();
-  req.flash('success', 'Successfully added a new order.')
-  res.redirect(`/orders/${order._id}`)
+  req.flash('success', 'Successfully added a new order.');
+  res.redirect(`/orders/${order._id}`);
 }
 
 module.exports.showOrder = async (req, res) => {
@@ -62,13 +82,12 @@ module.exports.updateOrder = async(req, res) => {
   }
 
   console.log("Attempting to update");
-  // const order = await Order.findByIdAndUpdate(id, { ...req.body.order });
+  const order = await Order.findByIdAndUpdate(id, { ...req.body.order });
   req.flash('success', 'Successfully updated the order.')
   res.redirect(`/orders/${order._id}`)
 }
 
 module.exports.deleteOrder = async(req, res) => {
-  console.log(`DELETING ORDER`);
   const { id } = req.params;
   const order = await Order.findById(id);
   await Order.findByIdAndDelete(id);

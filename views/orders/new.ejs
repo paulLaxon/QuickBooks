@@ -9,7 +9,7 @@
       <input type="submit" value="Close Browser" name="pageOption" class="btn btn-warning mb-3">
       <input type="submit" value="Get Book Info" name="pageOption" class="btn btn-success mb-3">
     </form>
-    <form action="/orders" method="POST">
+    <form action="/orders" method="POST" enctype="application/json">
       <div class="card">
         <div class="card-body">
           <div class="container fw-bold">
@@ -27,15 +27,15 @@
               </thead>
               <tbody id="bookRowBody">
                 <% if (orderItems.length > 0) { %>
-                  <% for (const [index, item] of orderItems.entries()) { %>
+                  <% for (const [index, orderItem] of orderItems.entries()) { %>
                     <tr>
                       <th scope="row"><%= index + 1 %>.</th>
-                      <td><input type="text" id="title" size="40" name="item[book][title]" value="<%= item.book.title %>"></td>
-                      <td><input type="text" id="author" size="30" name="item[book][author]" value="<%= item.book.author %>"></td>
-                      <td><input type="text" id="isbn" size="12" name="item[book][isbn]" value=<%= item.book.isbn %>></td>
-                      <td><input type="text" id="quantity" size="1" style="text-align:right;" name="item[quantity]" value=<%= item.quantity %>></td>
-                      <td><input type="text" id="price" size="3" style="text-align:right;" name="item[price]" value=<%= formatter.format(item.price) %>></td>
-                      <td><input type="text" id="vendor" size="6" name="item[vendor]" value=<%= item.vendor %>></td>
+                      <td><input type="text" class="form-control" id="title" size="40" name="orderItem[book][title]" value="<%= orderItem.book.title %>"></td>
+                      <td><input type="text" class="form-control" id="author" size="30" name="orderItem[book][author]" value="<%= orderItem.book.author %>"></td>
+                      <td><input type="text" class="form-control" id="isbn" size="12" name="orderItem[book][isbn]" value=<%= orderItem.book.isbn %>></td>
+                      <td><input type="text" class="form-control" id="quantity" size="1" style="text-align:right;" name="orderItem[quantity]" value=<%= orderItem.quantity %>></td>
+                      <td><input type="text" class="form-control" id="price" size="3" style="text-align:right;" name="orderItem[price]" value=<%= formatter.format(orderItem.price) %>></td>
+                      <td><input type="text" class="form-control" id="vendor" size="6" name="orderItem[vendor]" value=<%= orderItem.vendor %>></td>
                       <td><input type="button" class="btn btn-warning" value="Remove Book" onclick="RemoveBookRow(this)"></td>
                     </tr>
                   <% } %>

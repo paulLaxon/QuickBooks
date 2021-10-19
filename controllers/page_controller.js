@@ -26,7 +26,6 @@ module.exports.pageOptions = async (req, res) => {
     const orderItem = await scrapePage(page);
     orderItems.push(orderItem);
     const orderCost = totalCost(orderItems);
-    console.log(`new order items: ${orderItems}`);
     res.render('orders/new', { orderItems, orderCost });
   }
 }
@@ -98,7 +97,7 @@ async function findImage(page) {
 
 async function findAuthor(page) {
   let author = await page.$eval('span.author', el => el.innerText);
-  author = author.replace('  (Author)', '');
+  author = author.replace('  (Author)', '').replace(',', '').trim();
   return author;
 }
 
