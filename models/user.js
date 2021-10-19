@@ -7,7 +7,12 @@ const UserSchema = new Schema({
     type: String,
     required: true,
     unique: true
-  }
+  },
+  userName: {
+    type: String,
+    required: true,
+    unique: true
+  },
 });
 
 UserSchema.plugin(passport);

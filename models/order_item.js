@@ -7,8 +7,14 @@ const OrderItemSchema = new Schema({
     ref: 'Book'
   },
   price: Number,
-  quantity: Number,
-  vendor: String,
+  quantity: {
+    type: Number,
+    default: 1,
+  },
+  vendor: {
+    type: String,
+    default: 'Amazon',
+  }
 });
 
 module.exports = mongoose.model('OrderItem', OrderItemSchema);

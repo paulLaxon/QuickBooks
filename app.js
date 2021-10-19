@@ -46,6 +46,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 app.use(express.static('public'));
 app.use(mongoSanitize());
+app.use(express.json());
 
 const sessionConfig = {
   store: MongoStore.create({
